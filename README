@@ -1,0 +1,149 @@
+NAME
+    WWW::Mooos::Scraper - Mooos scraper module
+
+VERSION
+    0.01
+
+SYNOPSIS
+      use WWW::Mooos::Scraper;
+      use strict;
+
+      my $mooos = WWW::Mooos::Scraper->new;
+      my $res = $mooos->readers(page => 1);
+      if(exists $res->{error}){
+        die $res->{error};
+      }
+  
+      foreach my $article(@{$res->{recent_articles}}){
+    
+         while(my($key, $val) = each %{$article}){
+            printf "%-15s %s\n", $key, $val;
+         }
+      }
+
+DESCRIPTION
+    Mooos is open message boards service.
+
+    It scrapes the content of this site.
+
+    URL http://www.mooos.net/
+
+METHOD
+  new
+    Create instance
+
+    Option:
+
+      time_zone : your location time zone(default: Asia/Tokyo)
+
+    Example:
+
+      my $mooos = WWW::Mooos::Scraper->new;
+
+  entry
+    It enters it in url that wants to comment
+
+    Options:
+
+      comment    : comment(require, utf8 string. but no utf8flag)
+      entry_type : positive or negative(require)
+      url        : url(require)
+
+    Example:
+
+      my $res = $mooos->entry( comment => "comment string", entry_type => "positive", url => "http://your.want.to.comment.url/" );
+      if(exists $res->{error}){
+        # error trap!
+        print Dumper($res);
+        exit;
+      }elsif(exists $res->{success}){
+        # success. do something...
+      }
+
+  readers
+    Get recent 10 articles
+
+    Option:
+
+      page : page number(default 1)
+
+    Example:
+
+      my $res = $mooos->readers( page => 1 );
+      if(exists $res->{error}){
+         # error trap!
+         print Dumper($res);
+         exit;
+      }
+  
+      foreach my $article(@{$res}){
+    
+        print "page_title: " . $article->{page_title} . "\n";
+        print "page_url: " . $article->{page_url} . "\n";             # URI instance
+        print "comment_num: " . $article->{comment_num} . "\n";
+        print "mooos_page_url: " . $article->{mooos_page_url} . "\n"; # URI instance
+        print "entry_time: " . $article->{entry_time} . "\n";         # DateTime instance
+        print "comment: " . $article->{comment} . "\n";
+        print "entry_type: " . $article->{entry_type} . "\n";
+        print "-" x 50;
+        print "\n";
+      }
+
+  search
+    Get url search
+
+    Option:
+
+      page : page number(default 1)
+      url  : url(require)
+
+    Example:
+
+      my $res = $mooos->search( page => 1, url => "http://your.want.to.search.url/" );
+      if(exists $res->{error}){
+         # error trap!
+         print Dumper($res);
+         exit;
+      }
+  
+      print "page_title: " . $article->{page_title} . "\n";
+      print "page_url: " . $article->{page_url} . "\n";             # URI instance
+      print "thumbnail_url: " . $article->{thumbnail_url} . "\n";   # URI instance
+      print "comment_num: " . $article->{comment_num} . "\n";
+      foreach my $comment(@{$res->article_comments}){
+    
+        print "comment: " . $article->{comment} . "\n";
+        print "entry_time: " . $article->{entry_time} . "\n";       # DateTime instance
+        print "entry_type: " . $article->{entry_type} . "\n";
+        print "-" x 50;
+        print "\n";
+      }
+
+ACCESSOR METHOD
+  time_zone
+    Get/Set your location time zone
+
+    Example:
+
+      $mooos->time_zone("Asia/Taipei");
+      $time_zone = $mooos->time_zone;
+
+  time
+    Get timestamp
+
+    Example:
+
+      $time = $mooos->time;
+
+SEE ALSO
+    Class::Accessor Readonly Sub::Install UNIVERSAL::require
+
+AUTHOR
+    Akira Horimoto
+
+COPYRIGHT AND LICENSE
+    This library is free software. You can redistribute it and/or modify it
+    under the same terms as perl itself.
+
+    Copyright (C) 2007 Akira Horimoto
+
