@@ -7,7 +7,7 @@ use Carp;
 use HTTP::Request;
 use LWP::UserAgent;
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 
 sub valid_param {

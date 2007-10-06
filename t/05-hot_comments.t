@@ -5,7 +5,7 @@ use WWW::Mooos::Scraper;
 
 my $mooos = WWW::Mooos::Scraper->new;
 
-my $res = $mooos->readers( page => 5 );
+my $res = $mooos->hot_comments( page => 4 );
 
 ok(!exists $res->{error}, "not exists error");
 

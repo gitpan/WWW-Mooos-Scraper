@@ -5,7 +5,7 @@ use warnings;
 use base qw(WWW::Mooos::Scraper::Scrape);
 use Web::Scraper;
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 sub valid_param {
 

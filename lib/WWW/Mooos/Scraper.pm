@@ -8,7 +8,7 @@ WWW::Mooos::Scraper - Mooos scraper module
 
 =head1 VERSION
 
-0.01
+0.02
 
 =head1 SYNOPSIS
 
@@ -50,14 +50,15 @@ use UNIVERSAL::require;
 __PACKAGE__->mk_accessors(qw(time_zone));
 __PACKAGE__->mk_ro_accessors(qw(time));
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 Readonly my $MOOOS_BASE_URL => "http://www.mooos.net/";
 Readonly my $MOOOS_TIMEZONE => "Asia/Tokyo";
 Readonly my %SCRAPE_PACKAGE => (
-                            entry   => "Entry",
-                            readers => "Readers",
-                            search  => "Search"
+                            entry        => "Entry",
+                            readers      => "Readers",
+                            search       => "Search",
+                            new_comments => "NewComments",
                             );
 
 sub import {
@@ -82,6 +83,8 @@ sub import {
             return $scrape->scrape(%param);
         };
         Sub::Install::install_sub({ code => $code, as => $key });
+        # alias readers -> hot_comments
+        Sub::Install::install_sub({ code => $code, as => "hot_comments" }) if $key eq "readers";
     }
 }
 
@@ -153,15 +156,52 @@ Example:
      exit;
   }
   
-  foreach my $article(@{$res}){
+  foreach my $article(@{$res->{recent_articles}}){
     
     print "page_title: " . $article->{page_title} . "\n";
     print "page_url: " . $article->{page_url} . "\n";             # URI instance
-    print "comment_num: " . $article->{comment_num} . "\n";
+    print "total_comments: " . $article->{total_comments} . "\n";
     print "mooos_page_url: " . $article->{mooos_page_url} . "\n"; # URI instance
+    print "positive_count: " . $article->{positive_count} . "\n";
+    print "negative_count: " . $article->{negative_count} . "\n";
     print "entry_time: " . $article->{entry_time} . "\n";         # DateTime instance
-    print "comment: " . $article->{comment} . "\n";
-    print "entry_type: " . $article->{entry_type} . "\n";
+    print "last_comment: " . $article->{last_comment} . "\n";
+    print "last_comment_type: " . $article->{last_comment_type} . "\n";
+    print "-" x 50;
+    print "\n";
+  }
+
+hot_comments method is readers method alias.
+
+  # same $mooos->reader result
+  my $res = $mooos->hot_comments( page => 1 );
+
+=head2 new_comments
+
+Get recent 10 comment
+
+Option:
+
+  page : page number(default 1)
+
+Example:
+
+  my $res = $mooos->new_comments( page => 1 );
+  if(exists $res->{error}){
+     # error trap!
+     print Dumper($res);
+     exit;
+  }
+  
+  foreach my $comment(@{$res->{new_comments}}){
+    
+    print "page_title: " . $comment->{page_title} . "\n";
+    print "page_url: " . $comment->{page_url} . "\n";             # URI instance
+    print "comment_num: " . $comment->{comment_num} . "\n";
+    print "mooos_page_url: " . $comment->{mooos_page_url} . "\n"; # URI instance
+    print "entry_time: " . $comment->{entry_time} . "\n";         # DateTime instance
+    print "comment: " . $comment->{comment} . "\n";
+    print "entry_type: " . $comment->{entry_type} . "\n";
     print "-" x 50;
     print "\n";
   }
@@ -184,15 +224,15 @@ Example:
      exit;
   }
   
-  print "page_title: " . $article->{page_title} . "\n";
-  print "page_url: " . $article->{page_url} . "\n";             # URI instance
-  print "thumbnail_url: " . $article->{thumbnail_url} . "\n";   # URI instance
-  print "comment_num: " . $article->{comment_num} . "\n";
-  foreach my $comment(@{$res->article_comments}){
+  print "page_title: " . $res->{page_title} . "\n";
+  print "page_url: " . $res->{page_url} . "\n";             # URI instance
+  print "thumbnail_url: " . $res->{thumbnail_url} . "\n";   # URI instance
+  print "comment_num: " . $res->{comment_num} . "\n";
+  foreach my $comment(@{$res->{article_comments}}){
     
-    print "comment: " . $article->{comment} . "\n";
-    print "entry_time: " . $article->{entry_time} . "\n";       # DateTime instance
-    print "entry_type: " . $article->{entry_type} . "\n";
+    print "comment: " . $comment->{comment} . "\n";
+    print "entry_time: " . $comment->{entry_time} . "\n";       # DateTime instance
+    print "entry_type: " . $comment->{entry_type} . "\n";
     print "-" x 50;
     print "\n";
   }

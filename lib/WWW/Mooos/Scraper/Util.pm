@@ -8,7 +8,7 @@ WWW::Mooos::Scraper::Util - WWW::Mooos::Scraper util module
 
 =head1 VERSION
 
-0.01
+0.02
 
 =head1 DESCRIPTION
 
@@ -36,7 +36,7 @@ our @EXPORT_OK   = qw(
                     );
 
 our %EXPORT_TAGS = ( all => \@EXPORT_OK );
-our $VERSION     = 0.01;
+our $VERSION     = 0.02;
 
 =pod
 
@@ -49,7 +49,7 @@ our $VERSION     = 0.01;
 sub _entry_time2datetime {
 
     my($entry_time, $timestamp, $timezone) = @_;
-    return if $entry_time eq "";
+    return if !defined $entry_time;
     $timestamp ||= time;
     my($day, $hour, $min);
 
@@ -77,7 +77,7 @@ sub _entry_time2datetime {
 sub _get_entry_type {
 
     my $entry_type = shift;
-    return if $entry_type eq "";
+    return if !defined $entry_type;
     return $entry_type =~ /positive/ ? "positive" : "negative";
 }
 
@@ -90,7 +90,7 @@ sub _get_entry_type {
 sub _get_mooos_page_url { 
 
     my($mooos_page_url, $uri) = @_;
-    return if $mooos_page_url eq "";
+    return if !defined $mooos_page_url;
     $mooos_page_url =~ s#^\.##;
     $uri->path($mooos_page_url);
     return $uri;
@@ -105,7 +105,7 @@ sub _get_mooos_page_url {
 sub _h2z {
 
     my $str = shift;
-    return if $str eq "";
+    return if !defined $str;
     Encode::from_to($str, "utf8", "euc-jp");
     Encode::JP::H2Z::h2z(\$str);
     Encode::from_to($str, "euc-jp", "utf8");
@@ -121,7 +121,7 @@ sub _h2z {
 sub _strip {
 
     my $str = shift;
-    return if $str eq "";
+    return if !defined $str;
     $str =~ s/^\s+//;
     $str =~ s/\s+$//;
     return $str;
@@ -136,7 +136,7 @@ sub _strip {
 sub _uri {
 
     my $uri = shift;
-    return if $uri eq "";
+    return if !defined $uri;
     return URI->new($uri);
 }
 
@@ -149,7 +149,7 @@ sub _uri {
 sub _utf8_encode {
 
     my $str = shift;
-    return if $str eq "";
+    return if !defined $str;
     return $str if !Encode::is_utf8($str);
     return Encode::encode_utf8($str);
 }

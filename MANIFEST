@@ -7,17 +7,23 @@ lib/WWW/Mooos/Scraper/Scrape.pm
 lib/WWW/Mooos/Scraper/Scrape/Entry.pm
 lib/WWW/Mooos/Scraper/Scrape/Readers.pm
 lib/WWW/Mooos/Scraper/Scrape/Search.pm
+lib/WWW/Mooos/Scraper/Scrape/NewComments.pm
 lib/WWW/Mooos/Scraper/Util.pm
 lib/WWW/Mooos/Scraper/Validate.pm
 lib/WWW/Mooos/Scraper/Validate/Entry.pm
 lib/WWW/Mooos/Scraper/Validate/Readers.pm
 lib/WWW/Mooos/Scraper/Validate/Search.pm
+lib/WWW/Mooos/Scraper/Validate/NewComments.pm
 t/00-use.t
 t/01-method.t
 t/02-readers.t
 t/03-search.t
 t/04-entry.t
-t/05-reader_invalid.t
-t/06-search_invalid.t
-t/07-entry_invalid.t
+t/05-hot_comments.t
+t/06-new_comments.t
+t/07-reader_invalid.t
+t/08-search_invalid.t
+t/09-entry_invalid.t
+t/10-hot_comments_invalid.t
+t/11-new_comments_invalid.t
 META.yml                                 Module meta-data (added by MakeMaker)

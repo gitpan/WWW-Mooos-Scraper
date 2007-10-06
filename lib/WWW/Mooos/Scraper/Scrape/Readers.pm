@@ -5,7 +5,7 @@ use warnings;
 use base qw(WWW::Mooos::Scraper::Scrape);
 use Web::Scraper;
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 sub valid_param {
 
@@ -24,22 +24,40 @@ sub scrape_uri {
 sub scrape_run {
 
     my($self, $uri) = @_;
-    my $ref = {};
-    my $recent_article = scraper {
-        process "div.pageTitle > a", page_title => "TEXT", page_url => "\@href";
-        process "div.total > span.number > a", comment_num => "TEXT", mooos_page_url => "\@href";
-        process "div.entry_time", entry_time => "TEXT";
-        process "div.comment > img", entry_type => "\@src";
-        process "div.comment", comment => "TEXT";
-        result qw(page_title page_url comment_num mooos_page_url entry_time comment entry_type);
-    };
-
+    my $ref = { recent_articles => [] };
     my $res = scraper {
-        process "div#recentComents > table[summary=\"recent comments\"] > tr > td", "recent_articles[]" => $recent_article;
-        result qw(recent_articles);
+        process "dt.totalComments > a", "mooos_page_url[]" => "\@href";
+                                                            #sub {
+                                                            #    my $elem = shift;
+                                                            #    (my $href = $elem->attr("href")) =~ s#\./##;
+                                                            #    return $self->uri->clone->abs($self->uri)->as_string . $href;
+                                                            #};
+        process "dt.totalComments > a > em", "total_comments[]" => "TEXT";
+        process "dd.pageTitle > a", "page_title[]" => "TEXT";
+        process "dd.pageTitle > a", "page_url[]" => "\@href";
+        process "dd.lastComment", "last_comment[]" => "TEXT";
+        process "dd.lastComment", "last_comment_type[]" => sub {
+                                                    my $elem = shift;
+                                                    return $elem->find_by_tag_name("li")->attr("class");
+                                                    },
+        process "dd.entryData > ul > li.entryTime", "entry_time[]" => "TEXT";
+        process "dd.entryData > ul > li.positive", "positive_count[]" => "TEXT";
+        process "dd.entryData > ul > li.negative", "negative_count[]" => "TEXT";
+        result qw(mooos_page_url total_comments page_title page_url last_comment last_comment_type entry_time positive_count negative_count);
     }->scrape($uri);
-    $ref->{recent_articles} = (ref($res) eq "HASH" && !keys %{$res}) ? [] : $res;
-    
+
+    # mooos_page_url is base count
+    if(defined $res->{mooos_page_url}){
+        foreach my $i(0..scalar @{$res->{mooos_page_url}} - 1){
+            
+            my %hash = ();
+            foreach my $key(keys %{$res}){
+                $hash{$key} = $res->{$key}->[$i];
+            }
+            push @{$ref->{recent_articles}}, \%hash;
+        }
+    }
+
     return $ref;
 }
 

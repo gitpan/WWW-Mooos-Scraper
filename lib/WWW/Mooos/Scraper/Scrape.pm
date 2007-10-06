@@ -131,7 +131,7 @@ sub scrapef {
                 $val = _get_entry_type($val);
             }elsif($key eq "mooos_page_url"){
                 $val = _get_mooos_page_url($val, $self->uri->clone);
-            }elsif($key eq "page_url" || $key eq "thumbnail_url"){
+            }elsif($key eq "page_url" || $key eq "total_comments_url" || $key eq "thumbnail_url"){
                 $val = _uri($val);
             }
 

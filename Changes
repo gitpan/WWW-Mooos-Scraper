@@ -1,5 +1,12 @@
 Revision history for Perl extension WWW::Mooos::Scraper.
 
+0.02  Sat Oct  6 12:22:34 2007
+    - http://www.mooos.net design change. Correspondence by the design change. 
+        add method - new_comments
+        specifications change method - readers
+        alias method hot_comments(readers method alias)
+      
+
 0.01  Sun Jul  2 02:26:50 2007
 	- original version; created by h2xs 1.23 with options
 		-A -X -n WWW::Mooos::Scraper
